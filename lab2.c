@@ -122,11 +122,18 @@ void *network_thread_f(void *ignored)
 {
   char recvBuf[BUFFER_SIZE];
   int n;
+  int place;
   /* Receive data */
   while ( (n = read(sockfd, &recvBuf, BUFFER_SIZE - 1)) > 0 ) {
     recvBuf[n] = '\0';
     printf("%s", recvBuf);
-    fbputs(recvBuf, 8, 0);
+    fbputs(recvBuf, place, 0);
+    if (sizeof(recvBuf) > 64) place++;
+    place++;
+    if (place == 23) place = 0;
+    memset(recvBuf, ' ', sizeof(recvBuf));
+    recvBuf[BUFFER_SIZE - 1] = '\n';
+    pbputs(recvBuf, place, 0);
   }
 
   return NULL;
