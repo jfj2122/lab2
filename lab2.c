@@ -104,8 +104,10 @@ int main()
       sprintf(keystate, "%02x %02x %02x", packet.modifiers, packet.keycode[0],
 	      packet.keycode[1]);
       printf("%s\n", keystate);
+      fbputchar(' ', 22, cur_col);
+      if (packet.keycode[0] != 0x00) cur_col++;
       fbputs(keystate, 6, 0);
-      fbputs('_', 22, cur_col);
+      fbputchar('_', 22, cur_col);
       if (packet.keycode[0] == 0x29) { /* ESC pressed? */
 	break;
       }
@@ -125,18 +127,18 @@ void *network_thread_f(void *ignored)
 {
   char recvBuf[BUFFER_SIZE];
   int n;
-  int place;
+  //int place;
   /* Receive data */
   while ( (n = read(sockfd, &recvBuf, BUFFER_SIZE - 1)) > 0 ) {
     recvBuf[n] = '\0';
     printf("%s", recvBuf);
-    fbputs(recvBuf, place, 0);
-    if (sizeof(recvBuf) > 64) place++;
+    fbputs(recvBuf, 8, 0);
+    /*if (sizeof(recvBuf) > 64) place++;
     place++;
     if (place == 23) place = 0;
     memset(recvBuf, ' ', sizeof(recvBuf));
     recvBuf[BUFFER_SIZE - 1] = '\n';
-    pbputs(recvBuf, place, 0);
+    pbputs(recvBuf, place, 0);*/
   }
 
   return NULL;
