@@ -92,6 +92,7 @@ int main()
     exit(1);
   }
 
+
   /* Start the network thread */
   pthread_create(&network_thread, NULL, network_thread_f, NULL);
 
@@ -105,7 +106,7 @@ int main()
 	      packet.keycode[1]);
       printf("%s\n", keystate);
       fbputs(keystate, 6, 0);
-      fbputs('_', 22, cur_col);
+      fbputchar('_', 22, cur_col);
       if (packet.keycode[0] == 0x29) { /* ESC pressed? */
 	break;
       }
@@ -136,7 +137,7 @@ void *network_thread_f(void *ignored)
     if (place == 23) place = 0;
     memset(recvBuf, ' ', sizeof(recvBuf));
     recvBuf[BUFFER_SIZE - 1] = '\n';
-    pbputs(recvBuf, place, 0);
+    fbputs(recvBuf, place, 0);
   }
 
   return NULL;
