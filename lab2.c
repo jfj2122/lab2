@@ -41,8 +41,9 @@ void *network_thread_f(void *);
 
 int main()
 {
-  int err, col;
-
+  //delete cur_row
+  int err, col, cur_row, cur_col;
+  
   struct sockaddr_in serv_addr;
 
   struct usb_keyboard_packet packet;
@@ -60,6 +61,7 @@ int main()
     fbputchar('_', 21, col);
     fbputchar('*', 23, col);
   }
+  cur_col = 0;
 
   fbputs("Hello CSEE 4840 World!", 4, 10);
 
@@ -102,7 +104,10 @@ int main()
       sprintf(keystate, "%02x %02x %02x", packet.modifiers, packet.keycode[0],
 	      packet.keycode[1]);
       printf("%s\n", keystate);
+      fbputchar(' ', 22, cur_col);
+      if (packet.keycode[0] != 0x00) cur_col++;
       fbputs(keystate, 6, 0);
+      fbputchar('_', 22, cur_col);
       if (packet.keycode[0] == 0x29) { /* ESC pressed? */
 	break;
       }
@@ -122,11 +127,18 @@ void *network_thread_f(void *ignored)
 {
   char recvBuf[BUFFER_SIZE];
   int n;
+  //int place;
   /* Receive data */
   while ( (n = read(sockfd, &recvBuf, BUFFER_SIZE - 1)) > 0 ) {
     recvBuf[n] = '\0';
     printf("%s", recvBuf);
     fbputs(recvBuf, 8, 0);
+    /*if (sizeof(recvBuf) > 64) place++;
+    place++;
+    if (place == 23) place = 0;
+    memset(recvBuf, ' ', sizeof(recvBuf));
+    recvBuf[BUFFER_SIZE - 1] = '\n';
+    pbputs(recvBuf, place, 0);*/
   }
 
   return NULL;
