@@ -41,8 +41,9 @@ void *network_thread_f(void *);
 
 int main()
 {
-  int err, col;
-
+  //delete cur_row
+  int err, col, cur_row, cur_col;
+  
   struct sockaddr_in serv_addr;
 
   struct usb_keyboard_packet packet;
@@ -60,6 +61,7 @@ int main()
     fbputchar('_', 21, col)
     fbputchar('*', 23, col);
   }
+  cur_col = 0;
 
   fbputs("Hello CSEE 4840 World!", 4, 10);
 
@@ -103,6 +105,7 @@ int main()
 	      packet.keycode[1]);
       printf("%s\n", keystate);
       fbputs(keystate, 6, 0);
+      fbputs('_', 22, cur_col);
       if (packet.keycode[0] == 0x29) { /* ESC pressed? */
 	break;
       }
