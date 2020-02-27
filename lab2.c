@@ -98,6 +98,7 @@ int main()
 
   /* Look for and handle keypresses */
   int key;
+  char sendbuf[BUFFER_SIZE];
   for (;;) {
     libusb_interrupt_transfer(keyboard, endpoint_address,
 			      (unsigned char *) &packet, sizeof(packet),
@@ -108,16 +109,21 @@ int main()
       printf("%s\n", keystate);
       key = convert_key(packet.modifiers, packet.keycode[0]);
       if (key != 0) {
-	if (key != 1 && key != 2 && key != 3) {
+	if (key != 1 && key != 2 && key != 3 && key != 8) {
 	  fbputchar(' ', 22, cur_col);
 	  fbputchar(key, 22, cur_col);
+	  sendbuf[cur_col] = key;
 	  if (packet.keycode[0] != 0x00) cur_col++;
-	  fbputchar('_', 22, cur_col);
+	  //fbputchar('_', 22, cur_col);
 	} else {
-
+	  if (key == 8) cur_col--;
+	  if (key == 1) {
+	    fprintf(stderr, %s, sendbuf);
+	  }
+	  
 	}
-	
       }
+      fbputchar('_', 22, cur_col);
       fbputs(keystate, 6, 0);
       if (packet.keycode[0] == 0x29) { /* ESC pressed? */
 	break;
@@ -147,7 +153,7 @@ void *network_thread_f(void *ignored)
     fbputs(recvBuf, place, 0);
     if (strlen(recvBuf) > 64) place++;
     place++;
-    if (place >= 20) place = 8;
+    if (place > 20) place = 8;
     memset(recvBuf, ' ', sizeof(recvBuf));
     recvBuf[BUFFER_SIZE - 1] = '\n';
     fbputs(recvBuf, place, 0);
