@@ -106,7 +106,7 @@ int main()
 	      packet.keycode[1]);
       printf("%s\n", keystate);
       key = convert_key(packet.modifiers, packet.keycode[0]);
-      if (key != -1) {
+      if (key != 0) {
 	fbputchar(' ', 22, cur_col);
 	if (packet.keycode[0] != 0x00) cur_col++;
 	//fbputs(keystate, 6, 0);
@@ -150,14 +150,18 @@ void *network_thread_f(void *ignored)
   return NULL;
 }
 
-int *convert_key(char *mod, char *key) {
+int convert_key(char *mod, char *key) {
   //int out;
+  printf("in convert key/n");
   int ikey = (int)strtol(key, NULL, 0);
+  printf("convert 1");
   int imod = (int)strtol(mod, NULL, 0);
+  printf("convert both");
   if (ikey >= 4 && ikey <= 29) {
     ikey = ikey + 93;
+    print("ikey is %d", ikey);
     if (imod == 2) ikey = ikey - 32;
   }
-  else ikey = -1;
-  
+  else ikey = 0;
+  return ikey;
 }
