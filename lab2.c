@@ -126,7 +126,7 @@ int main()
   int key, state, buf_end;
   char hold;
   char sendbuf[BUFFER_SIZE];
-  char half1[BUFFER_SIZE/2];
+  char half1[BUFFER_SIZE/2 + 1];
   char half2[BUFFER_SIZE/2];
   buf_end = 0;
   for (;;) {
@@ -215,7 +215,7 @@ int main()
 	fbputs(half2, 22, 0);
 	//memcpy(half1, sendbuf, 64);
 	strncpy(half1, sendbuf, 64);
-	half1[63] = 0;
+	half1[64] = 0;
 	fbputs(half1, 21, 0);
 	fprintf(stderr, "\n\n str 1: %s\nstr 2: %s\n\n", half1, half2);
       } else fbputs(sendbuf, 21, 0);
