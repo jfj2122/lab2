@@ -126,6 +126,7 @@ int main()
   int key, state, buf_end;
   char hold;
   char sendbuf[BUFFER_SIZE];
+  memset(sendbuf, 0, BUFFER_SIZE);
   char half1[BUFFER_SIZE/2 + 1];
   char half2[BUFFER_SIZE/2];
   buf_end = 0;
