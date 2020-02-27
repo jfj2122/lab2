@@ -233,10 +233,25 @@ int convert_key(uint8_t mod, uint8_t key) {
   //int out;
   int ikey = (int) key;
   int imod = (int) mod;
-  if (ikey >= 4 && ikey <= 29) {
+  if (ikey >= 4 && ikey <= 29) { // letters
     ikey = ikey + 93;
     fprintf(stderr, "ikey is %d\n", ikey);
-    if (imod == 2) ikey = ikey - 32;
+    if (imod == 2 /*|| imod ==*/ ) ikey = ikey - 32;
+  }
+  else if (ikey >= 30 && ikey <= 39) { //numbers
+    if (imod == 2 /*|| imod ==*/ ) {
+      if (ikey == 30) ikey = 33; // !
+      if (ikey == 31) ikey = 64; // @
+      if (ikey == 32) ikey = 35; // #
+      if (ikey == 33) ikey = 36; // $
+      if (ikey == 34) ikey = 25; // %
+      if (ikey == 35) ikey = 94; // ^
+      if (ikey == 36) ikey = 38; // &
+      if (ikey == 37) ikey = 42; // *
+      if (ikey == 38) ikey = 40; // (
+      if (ikey == 39) ikey = 41; // )
+    }
+    else ikey = ikey + 18;
   }
   else if (key == 42) ikey = 8; //backspace
   else if (key == 44) ikey = 32; //space
