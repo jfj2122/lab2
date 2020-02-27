@@ -110,6 +110,7 @@ int main()
 
   /* Look for and handle keypresses */
   int key;
+  char hold;
   char sendbuf[BUFFER_SIZE];
   for (;;) {
     libusb_interrupt_transfer(keyboard, endpoint_address,
@@ -128,7 +129,7 @@ int main()
 	  if (packet.keycode[0] != 0x00) cur_col++;
 	} else {
 	  if (key == 8) { //need to check not in middle of text
-	    if(!sendbuf[cur_col]) fbputchar(' ', 22 cur_col);
+	    fbputchar(sendbuf[cur_col], 22, cur_col);
 	    cur_col--;
 	  }
 	  if (key == 1) {
@@ -137,10 +138,16 @@ int main()
 	    write(sockfd, sendbuf, BUFFER_SIZE);
 	    clear(23,21,64,0);
 	    cur_col = 0;
+	    sendbuf[0] = 0;
 	  }
+	  if (key == 2)
+	    if (cur_col != 0) cur_col--;
+	  if (key == 3)
+	    if (cur_col < strlen(sendbuf)) cur_col++;
 	  
 	}
       }
+      hold = sendbuf(cur_col);
       fbputchar('_', 22, cur_col);
       fbputs(keystate, 6, 0);
       if (packet.keycode[0] == 0x29) { /* ESC pressed? */
