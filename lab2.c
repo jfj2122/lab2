@@ -66,7 +66,7 @@ int main()
   }
 
   //clear screen
-  clear(28,0,64,0);
+  clear(24,0,64,0);
   
   /* Draw rows of asterisks across the top and bottom of the screen */
   for (col = 0 ; col < 64 ; col++) {
@@ -114,7 +114,8 @@ int main()
   int key;
   char sendbuf[BUFFER_SIZE];
   for (;;) {
-    if (curr == '_') curr = 'hold';
+    if (curr == '_') curr = hold;
+    else curr == '_';
     libusb_interrupt_transfer(keyboard, endpoint_address,
 			      (unsigned char *) &packet, sizeof(packet),
 			      &transferred, 0);
@@ -136,12 +137,13 @@ int main()
 	    fprintf(stderr, "%s\n", sendbuf);
 	    write(sockfd, sendbuf, BUFFER_SIZE);
 	    clear(23,21,64,0);
-	    //cur_col = 0;
+	    cur_col = 0;
 	  }
 	  
 	}
       }
-      fbputchar('_', 22, cur_col);
+      hold = sendbuf[cur_col];
+      fbputchar(cur, 22, cur_col);
       fbputs(keystate, 6, 0);
       if (packet.keycode[0] == 0x29) { /* ESC pressed? */
 	break;
