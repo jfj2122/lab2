@@ -153,7 +153,7 @@ int main()
 	  if (key == 8) { //backspace
 	    if(state != 1) {
 	      //fbputchar(hold, cur_row, cur_col);
-	      memcpy($sendbuf[buff_col - 1], $sendbuf[buff_col], (buf_end - buf_col) + 1);
+	      memcpy(sendbuf + buff_col - 1, sendbuf + buff_col, (buf_end - buf_col) + 1);
 	      if(state == 3) {
 		cur_col = 63;
 		cur_row = 21;
