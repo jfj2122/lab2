@@ -59,7 +59,7 @@ int main()
   /* Draw rows of asterisks across the top and bottom of the screen */
   for (col = 0 ; col < 64 ; col++) {
     fbputchar('*', 0, col);
-    fbputchar('_', 21, col)
+    fbputchar('_', 20, col)
     fbputchar('*', 23, col);
   }
   cur_col = 0;
@@ -118,7 +118,9 @@ int main()
 	} else {
 	  if (key == 8) cur_col--;
 	  if (key == 1) {
-	    fprintf(stderr, %s, sendbuf);
+	    sendbuf[cur_col] = 0;
+	    fprintf(stderr, "%s\n", sendbuf);
+	    write(sockfd, sendbuf, BUFFER_SIZE);
 	  }
 	  
 	}
@@ -153,7 +155,7 @@ void *network_thread_f(void *ignored)
     fbputs(recvBuf, place, 0);
     if (strlen(recvBuf) > 64) place++;
     place++;
-    if (place > 20) place = 8;
+    if (place >= 19) place = 8;
     memset(recvBuf, ' ', sizeof(recvBuf));
     recvBuf[BUFFER_SIZE - 1] = '\n';
     fbputs(recvBuf, place, 0);
@@ -175,7 +177,7 @@ int convert_key(uint8_t mod, uint8_t key) {
   else if (key == 44) ikey = 32; //space
   else if (key == 79) ikey = 2; //left arrow
   else if (key == 89) ikey = 3; //right arrow
-  else if (key == 43) ikey = 1; //enter
+  else if (key == 40) ikey = 1; //enter
   else ikey = 0;
   return ikey;
 }
