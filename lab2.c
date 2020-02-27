@@ -141,10 +141,15 @@ int main()
 	    sendbuf[0] = 0;
 	  }
 	  else if (key == 2) {
-	    if (cur_col != 0) cur_col--;
+	    if (cur_col != 0) {
+	      fbputchar(hold, 22, cur_col);
+	      cur_col--;
+	    }
 	  }
 	  else if (key == 3) {
-	    if (cur_col < strlen(sendbuf)) cur_col++;
+	    if (cur_col < strlen(sendbuf)) {
+	      fbputchar(hold, 22, cur_col);
+	      cur_col++
 	  }
 	}
       }
@@ -179,7 +184,7 @@ void *network_thread_f(void *ignored)
     fbputs(recvBuf, place, 0);
     if (strlen(recvBuf) > 64) place++;
     place++;
-    if (place >= 19) place = 8;
+    if (place >= 20) place = 8;
     memset(recvBuf, ' ', sizeof(recvBuf));
     recvBuf[BUFFER_SIZE - 1] = '\n';
     fbputs(recvBuf, place, 0);
@@ -199,8 +204,8 @@ int convert_key(uint8_t mod, uint8_t key) {
   }
   else if (key == 42) ikey = 8; //backspace
   else if (key == 44) ikey = 32; //space
-  else if (key == 79) ikey = 2; //left arrow
-  else if (key == 89) ikey = 3; //right arrow
+  else if (key == 79) ikey = 3; //right arrow
+  else if (key == 80) ikey = 2; //left arrow
   else if (key == 40) ikey = 1; //enter
   else ikey = 0;
   return ikey;
