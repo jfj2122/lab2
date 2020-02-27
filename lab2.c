@@ -2,7 +2,7 @@
  *
  * CSEE 4840 Lab 2 for 2019
  *
- * JJ & BW
+ * JJ & BW t
  */
 #include "fbputchar.h"
 #include <stdio.h>
