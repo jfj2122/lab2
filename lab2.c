@@ -39,7 +39,7 @@ uint8_t endpoint_address;
 pthread_t network_thread;
 void *network_thread_f(void *);
 int convert_key(uint8_t mod, uint8_t key);
-int fb_place;
+int fb_place, int flag;
 
 void clear(int r, int rs, int c, int cs) {
   //fprintf(stderr, "clear called!!\n");
@@ -130,6 +130,7 @@ int main()
   char half1[BUFFER_SIZE/2 + 1];
   char half2[BUFFER_SIZE/2];
   buf_end = 0;
+  flag = 0;
   for (;;) {
     libusb_interrupt_transfer(keyboard, endpoint_address,
 			      (unsigned char *) &packet, sizeof(packet),
@@ -240,7 +241,7 @@ int main()
   return 0;
 }
 
-void *network_thread_f(void *ignored)
+pvoid *network_thread_f(void *ignored)
 {
   char recvBuf[BUFFER_SIZE];
   int n;
@@ -266,11 +267,15 @@ int convert_key(uint8_t mod, uint8_t key) {
   //int out;
   int ikey = (int) key;
   int imod = (int) mod;
-  if (ikey >= 4 && ikey <= 29) { // letters
+  if (ikey >= 4 && ikey <= 29 && flag == 0) { // letters
     ikey = ikey + 93;
     fprintf(stderr, "ikey is %d\n", ikey);
-    if (imod == 2 || imod == 32 ) ikey = ikey - 32;
+    if (imod == 2 || imod == 32 ) {
+      ikey = ikey - 32;
+      flag = 1;
+    }
   }
+  else if (ikey == 0 && imod == 0 && flag == 1) flag = 0;
   else if (ikey >= 30 && ikey <= 39) { //numbers
     if (imod == 2 || imod == 32 ) {
       if (ikey == 30) ikey = 33; // !
@@ -288,7 +293,7 @@ int convert_key(uint8_t mod, uint8_t key) {
       if(ikey != 39) ikey = ikey + 19;
       else ikey = 48;
     }
-  }
+p  }
   else if (key == 42) ikey = 8; //backspace
   else if (key == 44) ikey = 32; //space
   else if (key == 79) ikey = 3; //right arrow
