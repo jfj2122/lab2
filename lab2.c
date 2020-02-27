@@ -169,6 +169,8 @@ int main()
 	    write(sockfd, sendbuf, BUFFER_SIZE);
 	    fbputs("ME: ", fb_place, 0);
 	    fbputs( sendbuf, fb_place, 4);
+	    fb_place++;
+	    if(fb_place == 19) fb_place = 8;
 	    clear(23,21,64,0);
 	    cur_col = 0;
 	    buff_col = 0;
