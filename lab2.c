@@ -75,6 +75,7 @@ int main()
     fbputchar('*', 23, col);
   }
   cur_col = 0;
+  cur_row = 21;
 
   fbputs("Hello CSEE 4840 World!", 4, 10);
 
@@ -123,14 +124,15 @@ int main()
       key = convert_key(packet.modifiers, packet.keycode[0]);
       if (key != 0) {
 	if (key != 1 && key != 2 && key != 3 && key != 8) {
-	  fbputchar(' ', 22, cur_col);
-	  fbputchar(key, 22, cur_col);
+	  fbputchar(' ', 21, cur_col);
+	  fbputchar(key, 21, cur_col);
 	  sendbuf[cur_col] = key;
 	  if (packet.keycode[0] != 0x00) cur_col++;
 	} else {
 	  if (key == 8) { //need to check not in middle of text
-	    fbputchar(' ', 22, cur_col);
+	    fbputchar(hold, 22, cur_col);
 	    cur_col--;
+	    sendbuf[cur_col] = ' ';
 	  }
 	  else if (key == 1) {
 	    sendbuf[cur_col] = 0;
@@ -147,9 +149,10 @@ int main()
 	    }
 	  }
 	  else if (key == 3) {
-	    if (cur_col < strlen(sendbuf)) {
+	    if (cur_col <= strlen(sendbuf)) {
 	      fbputchar(hold, 22, cur_col);
-	      cur_col++
+	      cur_col++;
+	    }
 	  }
 	}
       }
@@ -183,8 +186,8 @@ void *network_thread_f(void *ignored)
     printf("%s", recvBuf);
     fbputs(recvBuf, place, 0);
     if (strlen(recvBuf) > 64) place++;
-    place++;
-    if (place >= 20) place = 8;
+    //place++;
+    if (place >= 21) place = 8;
     memset(recvBuf, ' ', sizeof(recvBuf));
     recvBuf[BUFFER_SIZE - 1] = '\n';
     fbputs(recvBuf, place, 0);
@@ -201,7 +204,7 @@ int convert_key(uint8_t mod, uint8_t key) {
     ikey = ikey + 93;
     fprintf(stderr, "ikey is %d\n", ikey);
     if (imod == 2) ikey = ikey - 32;
-  }
+  }}
   else if (key == 42) ikey = 8; //backspace
   else if (key == 44) ikey = 32; //space
   else if (key == 79) ikey = 3; //right arrow
