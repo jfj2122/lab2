@@ -39,6 +39,7 @@ uint8_t endpoint_address;
 pthread_t network_thread;
 void *network_thread_f(void *);
 int convert_key(uint8_t mod, uint8_t key);
+int fb_place;
 
 void clear(int r, int rs, int c, int cs) {
   for (int col = cs; col < c; col++) {
@@ -121,9 +122,10 @@ int main()
   pthread_create(&network_thread, NULL, network_thread_f, NULL);
 
   /* Look for and handle keypresses */
-  int key, state;
+  int key, state, buf_end;
   char hold;
   char sendbuf[BUFFER_SIZE];
+  buf_end = 0;
   for (;;) {
     libusb_interrupt_transfer(keyboard, endpoint_address,
 			      (unsigned char *) &packet, sizeof(packet),
@@ -145,23 +147,27 @@ int main()
 	      cur_row = 22;
 	    } else cur_col++;
 	    buff_col++;
+	    buf_end++;
 	  //if (packet.keycode[0] != 0x00) cur_col++;
 	} else {
 	  if (key == 8) { //backspace
 	    if(state != 1) {
 	      fbputchar(hold, cur_row, cur_col);
+	      //memcpy(send_buf, 
 	      if(state == 3) {
 		cur_col = 63;
 		cur_row = 21;
 		} else cur_col--;
+	      if (buf_col == buf_end) buf_end--;
 	      buff_col--;
 	      sendbuf[buff_col] = ' ';
 	    }
 	  }
 	  else if (key == 1) { // enter
-	    sendbuf[cur_col] = 0;
+	    sendbuf[buf_end] = 0;
 	    fprintf(stderr, "%s\n", sendbuf);
 	    write(sockfd, sendbuf, BUFFER_SIZE);
+	    fbputs(("Me: %s\n", sendbuf), 0, fb_place);
 	    clear(23,21,64,0);
 	    cur_col = 0;
 	    buff_col = 0;
@@ -213,18 +219,19 @@ void *network_thread_f(void *ignored)
 {
   char recvBuf[BUFFER_SIZE];
   int n;
-  int place = 8;
+  //int place = 8;
+  fb_place = 8;
   /* Receive data */
   while ( (n = read(sockfd, &recvBuf, BUFFER_SIZE - 1)) > 0 ) {
     recvBuf[n] = '\0';
     printf("%s", recvBuf);
-    fbputs(recvBuf, place, 0);
+    fbputs(recvBuf, fb_place, 0);
     //if (strlen(recvBuf) > 64) place++;
-    place++;
-    if (place >= 20) place = 8;
+    fb_place++;
+    if (fb_place >= 20) fb_place = 8;
     memset(recvBuf, ' ', sizeof(recvBuf));
     recvBuf[BUFFER_SIZE - 1] = '\n';
-    fbputs(recvBuf, place, 0);
+    fbputs(recvBuf, fb_place, 0);
   }
 
   return NULL;
@@ -254,7 +261,7 @@ int convert_key(uint8_t mod, uint8_t key) {
     }
     else {
       if(ikey != 39) ikey = ikey + 19;
-      else ikey = 39;
+      else ikey = 48;
     }
   }
   else if (key == 42) ikey = 8; //backspace
