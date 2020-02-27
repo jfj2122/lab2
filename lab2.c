@@ -210,9 +210,11 @@ int main()
       }
       clear(23,21,64,0);
       if (strlen(sendbuf) >= 64) {
-	memcpy(half2, sendbuf + 64, 64);
+	//memcpy(half2, sendbuf + 64, 64);
+	strncpy(half2, sendbuf + 64, 64);
 	fbputs(half2, 22, 0);
-	memcpy(half1, sendbuf, 64);
+	//memcpy(half1, sendbuf, 64);
+	strncpy(half1, sendbuf, 64);
 	fbputs(half1, 21, 0);
       } else fbputs(sendbuf, 21, 0);
       hold = sendbuf[buff_col];
