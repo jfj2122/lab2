@@ -151,7 +151,6 @@ int main()
 	    if(state != 1) {
 	      fbputchar(hold, cur_row, cur_col);
 	      if(state == 3) {
-		fprintf(stderr, "in if, state: %d", state);
 		cur_col = 63;
 		cur_row = 21;
 		} else cur_col--;
@@ -220,8 +219,8 @@ void *network_thread_f(void *ignored)
     recvBuf[n] = '\0';
     printf("%s", recvBuf);
     fbputs(recvBuf, place, 0);
-    if (strlen(recvBuf) > 64) place++;
-    //place++;
+    //if (strlen(recvBuf) > 64) place++;
+    place++;
     if (place >= 21) place = 8;
     memset(recvBuf, ' ', sizeof(recvBuf));
     recvBuf[BUFFER_SIZE - 1] = '\n';
@@ -242,18 +241,20 @@ int convert_key(uint8_t mod, uint8_t key) {
   }
   else if (ikey >= 30 && ikey <= 39) { //numbers
     if (imod == 2 /*|| imod ==*/ ) {
-      if (ikey == 30) ikey = 33; // !
-      if (ikey == 31) ikey = 64; // @
-      if (ikey == 32) ikey = 35; // #
-      if (ikey == 33) ikey = 36; // $
-      if (ikey == 34) ikey = 25; // %
-      if (ikey == 35) ikey = 94; // ^
-      if (ikey == 36) ikey = 38; // &
-      if (ikey == 37) ikey = 42; // *
-      if (ikey == 38) ikey = 40; // (
-      if (ikey == 39) ikey = 41; // )
+      if (ikey == 31) ikey = 33; // !
+      if (ikey == 32) ikey = 64; // @
+      if (ikey == 33) ikey = 35; // #
+      if (ikey == 34) ikey = 36; // $
+      if (ikey == 35) ikey = 37; // %
+      if (ikey == 36) ikey = 94; // ^
+      if (ikey == 37) ikey = 38; // &
+      if (ikey == 38) ikey = 42; // *
+      if (ikey == 39) ikey = 40; // (
+      if (ikey == 40) ikey = 41; // )
     }
-    else ikey = ikey + 18;
+    else {
+      if(ikey != 30) ikey = ikey + 19;
+      else ikey = 38
   }
   else if (key == 42) ikey = 8; //backspace
   else if (key == 44) ikey = 32; //space
