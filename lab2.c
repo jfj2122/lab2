@@ -42,6 +42,7 @@ int convert_key(uint8_t mod, uint8_t key);
 int fb_place;
 
 void clear(int r, int rs, int c, int cs) {
+  fprintf(stderr, "clear called!!");
   for (int col = cs; col < c; col++) {
     for (int row = rs; row < r; row++) {
       fbputchar(' ', row, col);
@@ -173,7 +174,7 @@ int main()
 	    fbputs( sendbuf, fb_place, 4);
 	    fb_place++;
 	    if(fb_place >= 19) fb_place = 8;
-	    //memset(sendbuf, ' ', sizeof(sendbuf));
+	    memset(sendbuf, ' ', sizeof(sendbuf));
 	    //sendbuf[BUFFER_SIZE - 1] = 0;//'\n';
 	    //fbputs(sendbuf, fb_place, 0);	    
 	    //clear(23,21,64,0);
