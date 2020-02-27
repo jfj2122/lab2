@@ -38,6 +38,7 @@ uint8_t endpoint_address;
 
 pthread_t network_thread;
 void *network_thread_f(void *);
+int convert_key(char* mod, char* key);
 
 int main()
 {
@@ -159,7 +160,7 @@ int convert_key(char *mod, char *key) {
   printf("convert both");
   if (ikey >= 4 && ikey <= 29) {
     ikey = ikey + 93;
-    print("ikey is %d", ikey);
+    printf("ikey is %d", ikey);
     if (imod == 2) ikey = ikey - 32;
   }
   else ikey = 0;
