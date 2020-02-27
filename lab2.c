@@ -108,11 +108,15 @@ int main()
       printf("%s\n", keystate);
       key = convert_key(packet.modifiers, packet.keycode[0]);
       if (key != 0) {
-	fbputchar(' ', 22, cur_col);
-	fbputchar(key, 22, cur_col);
-	if (packet.keycode[0] != 0x00) cur_col++;
-	//fbputs(keystate, 6, 0);
-	fbputchar('_', 22, cur_col);
+	if (key != 1 && key != 2 && key != 3) {
+	  fbputchar(' ', 22, cur_col);
+	  fbputchar(key, 22, cur_col);
+	  if (packet.keycode[0] != 0x00) cur_col++;
+	  fbputchar('_', 22, cur_col);
+	} else {
+
+	}
+	
       }
       fbputs(keystate, 6, 0);
       if (packet.keycode[0] == 0x29) { /* ESC pressed? */
@@ -143,7 +147,7 @@ void *network_thread_f(void *ignored)
     fbputs(recvBuf, place, 0);
     if (strlen(recvBuf) > 64) place++;
     place++;
-    if (place >= 23) place = 8;
+    if (place >= 20) place = 8;
     memset(recvBuf, ' ', sizeof(recvBuf));
     recvBuf[BUFFER_SIZE - 1] = '\n';
     fbputs(recvBuf, place, 0);
@@ -161,6 +165,11 @@ int convert_key(uint8_t mod, uint8_t key) {
     fprintf(stderr, "ikey is %d\n", ikey);
     if (imod == 2) ikey = ikey - 32;
   }
+  else if (key == 42) ikey = 8; //backspace
+  else if (key == 44) ikey = 32; //space
+  else if (key == 79) ikey = 2; //left arrow
+  else if (key == 89) ikey = 3; //right arrow
+  else if (key == 43) ikey = 1; //enter
   else ikey = 0;
   return ikey;
 }
