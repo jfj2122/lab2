@@ -174,8 +174,8 @@ int main()
 	    fbputs( sendbuf, fb_place, 4);
 	    fb_place++;
 	    if(fb_place >= 19) fb_place = 8;
-	    memset(sendbuf, ' ', sizeof(sendbuf));
-	    sendbuf[BUFFER_SIZE - 1] = 0;//'\n';
+	    memset(sendbuf, 0, sizeof(sendbuf));
+	    //sendbuf[BUFFER_SIZE - 1] = 0;//'\n';
 	    //fbputs(sendbuf, fb_place, 0);	    
 	    //clear(23,21,64,0);
 	    cur_col = 0;
@@ -205,12 +205,11 @@ int main()
 	    }
 	  }
 	}
-      
-	clear(23,21,64,0);
-	fbputs(sendbuf, cur_row, 0);
-	hold = sendbuf[buff_col];
-	fbputchar('_', cur_row, cur_col);
       }
+      clear(23,21,64,0);
+      fbputs(sendbuf, 21, 0);
+      hold = sendbuf[buff_col];
+      fbputchar('_', cur_row, cur_col);
       fbputs(keystate, 6, 0);
       fprintf(stderr, "bufpos: %d \nbuffer: %s\n", buff_col, sendbuf);
       if (packet.keycode[0] == 0x29) { /* ESC pressed? */
