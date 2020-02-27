@@ -193,6 +193,7 @@ int main()
       hold = sendbuf[buff_col];
       fbputchar('_', cur_row, cur_col);
       fbputs(keystate, 6, 0);
+      fprintf(stderr, "bufpos: %d \nbuffer: %s\n", buff_col, sendbuf);
       if (packet.keycode[0] == 0x29) { /* ESC pressed? */
 	break;
       }
