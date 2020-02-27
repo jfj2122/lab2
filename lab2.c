@@ -41,7 +41,7 @@ void *network_thread_f(void *);
 int convert_key(uint8_t mod, uint8_t key);
 int fb_place;
 
-clear(int r, int rs, int c, int cs) {
+void clear(int r, int rs, int c, int cs) {
   for (int col = cs; col < c; col++) {
     for (int row = rs; row < r; row++) {
       fbputchar(' ', row, col);
@@ -281,7 +281,7 @@ int convert_key(uint8_t mod, uint8_t key) {
   else if (key == 80) ikey = 2; //left arrow
   else if (key == 40) ikey = 1; //enter
   else if (ikey >= 45 && ikey <= 56) { //special characters
-    if (imod == 2 || imode == 32) {
+    if (imod == 2 || imod == 32) {
       if (ikey == 45) ikey = 95; // _
       if (ikey == 46) ikey = 43; // +
       if (ikey == 47) ikey = 123; // {
