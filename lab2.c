@@ -158,7 +158,7 @@ int main()
 		cur_col = 63;
 		cur_row = 21;
 		} else cur_col--;
-	      if (buf_col == buf_end) buf_end--;
+	      if (buff_col == buf_end) buf_end--;
 	      buff_col--;
 	      sendbuf[buff_col] = ' ';
 	    }
@@ -167,7 +167,8 @@ int main()
 	    sendbuf[buf_end] = 0;
 	    fprintf(stderr, "%s\n", sendbuf);
 	    write(sockfd, sendbuf, BUFFER_SIZE);
-	    fbputs(("Me: %s\n", sendbuf), 0, fb_place);
+	    fbputs("ME: ", fb_place, 0);
+	    fbputs( sendbuf, fb_place, 4);
 	    clear(23,21,64,0);
 	    cur_col = 0;
 	    buff_col = 0;
