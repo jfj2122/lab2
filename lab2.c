@@ -96,6 +96,7 @@ int main()
   pthread_create(&network_thread, NULL, network_thread_f, NULL);
 
   /* Look for and handle keypresses */
+  int key;
   for (;;) {
     libusb_interrupt_transfer(keyboard, endpoint_address,
 			      (unsigned char *) &packet, sizeof(packet),
@@ -104,12 +105,17 @@ int main()
       sprintf(keystate, "%02x %02x %02x", packet.modifiers, packet.keycode[0],
 	      packet.keycode[1]);
       printf("%s\n", keystate);
-      fbputchar(' ', 22, cur_col);
-      if (packet.keycode[0] != 0x00) cur_col++;
+      key = convert_key(packet.modifiers, packet.keycode[0]);
+      if (key != -1) {
+	fbputchar(' ', 22, cur_col);
+	if (packet.keycode[0] != 0x00) cur_col++;
+	//fbputs(keystate, 6, 0);
+	fbputchar('_', 22, cur_col);
+      }
       fbputs(keystate, 6, 0);
-      fbputchar('_', 22, cur_col);
       if (packet.keycode[0] == 0x29) { /* ESC pressed? */
 	break;
+	
       }
     }
   }
@@ -133,14 +139,25 @@ void *network_thread_f(void *ignored)
     recvBuf[n] = '\0';
     printf("%s", recvBuf);
     fbputs(recvBuf, place, 0);
-    if (sizeof(recvBuf) > 64) place++;
+    if (strlen(recvBuf) > 64) place++;
     place++;
-    if (place == 23) place = 8;
+    if (place >= 23) place = 8;
     memset(recvBuf, ' ', sizeof(recvBuf));
     recvBuf[BUFFER_SIZE - 1] = '\n';
-    pbputs(recvBuf, place, 0);
+    fbputs(recvBuf, place, 0);
   }
 
   return NULL;
 }
 
+int *convert_key(char *mod, char *key) {
+  //int out;
+  int ikey = (int)strtol(key, NULL, 0);
+  int imod = (int)strtol(mod, NULL, 0);
+  if (ikey >= 4 && ikey <= 29) {
+    ikey = ikey + 93;
+    if (imod == 2) ikey = ikey - 32;
+  }
+  else ikey = -1;
+  
+}
