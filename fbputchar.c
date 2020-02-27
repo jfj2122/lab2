@@ -29,6 +29,7 @@ struct fb_fix_screeninfo fb_finfo;
 unsigned char *framebuffer;
 static unsigned char font[];
 
+
 /*
  * Open the framebuffer to prepare it to be written to.  Returns 0 on success
  * or one of the FBOPEN_... return codes if something went wrong.
@@ -99,6 +100,7 @@ void fbputchar(char c, int row, int col)
     if (y & 0x1) pixelp++;
   }
 }
+
 
 /*
  * Draw the given string at the given row/column.
