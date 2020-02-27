@@ -153,7 +153,7 @@ int main()
 	  if (key == 8) { //backspace
 	    if(state != 1) {
 	      //fbputchar(hold, cur_row, cur_col);
-	      memcpy(sendbuf + buff_col - 1, sendbuf + buff_col, (buf_end - buf_col) + 1);
+	      memcpy(sendbuf + buff_col - 1, sendbuf + buff_col, (buf_end - buff_col) + 1);
 	      if(state == 3) {
 		cur_col = 63;
 		cur_row = 21;
@@ -162,7 +162,7 @@ int main()
 	      buff_col--;
 	      buf_end--;
 	      //sendbuf[buff_col] = ' ';
-	      fbputs(sendbuf, cur_row, 0);
+	      //fbputs(sendbuf, cur_row, 0);
 	    }
 	  }
 	  else if (key == 1) { // enter
@@ -194,7 +194,7 @@ int main()
 	    }
 	  }
 	  else if (key == 3) {
-	    if (cur_col < strlen(sendbuf) - 1) {
+	    if (cur_col < buf_end - 1) {
 	      fbputchar(hold, cur_row, cur_col);
 	      buff_col++;
 	      if(state == 2) {
