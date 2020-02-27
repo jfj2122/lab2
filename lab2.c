@@ -2,7 +2,7 @@
  *
  * CSEE 4840 Lab 2 for 2019
  *
- * Name/UNI: Please Changeto Yourname (pcy2301)
+ * JJ & BW
  */
 #include "fbputchar.h"
 #include <stdio.h>
