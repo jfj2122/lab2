@@ -178,7 +178,7 @@ int main()
 	    if(fb_place >= 19) fb_place = 8;
 	    memset(sendbuf, 0, sizeof(sendbuf));
 	    //sendbuf[BUFFER_SIZE - 1] = 0;//'\n';
-	    //fbputs(sendbuf, fb_place, 0);	    
+	    fbputs(sendbuf, fb_place, 0);	    
 	    //clear(23,21,64,0);
 	    cur_col = 0;
 	    buff_col = 0;
