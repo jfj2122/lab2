@@ -121,6 +121,7 @@ int main()
 	    sendbuf[cur_col] = 0;
 	    fprintf(stderr, "%s\n", sendbuf);
 	    write(sockfd, sendbuf, BUFFER_SIZE);
+	    //note for git
 	  }
 	  
 	}
