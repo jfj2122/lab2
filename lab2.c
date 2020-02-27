@@ -129,10 +129,10 @@ int main()
 	  if (packet.keycode[0] != 0x00) cur_col++;
 	} else {
 	  if (key == 8) { //need to check not in middle of text
-	    fbputchar(sendbuf[cur_col], 22, cur_col);
+	    fbputchar(' ', 22, cur_col);
 	    cur_col--;
 	  }
-	  if (key == 1) {
+	  else if (key == 1) {
 	    sendbuf[cur_col] = 0;
 	    fprintf(stderr, "%s\n", sendbuf);
 	    write(sockfd, sendbuf, BUFFER_SIZE);
@@ -140,14 +140,15 @@ int main()
 	    cur_col = 0;
 	    sendbuf[0] = 0;
 	  }
-	  if (key == 2)
+	  else if (key == 2) {
 	    if (cur_col != 0) cur_col--;
-	  if (key == 3)
+	  }
+	  else if (key == 3) {
 	    if (cur_col < strlen(sendbuf)) cur_col++;
-	  
+	  }
 	}
       }
-      hold = sendbuf(cur_col);
+      hold = sendbuf[cur_col];
       fbputchar('_', 22, cur_col);
       fbputs(keystate, 6, 0);
       if (packet.keycode[0] == 0x29) { /* ESC pressed? */
