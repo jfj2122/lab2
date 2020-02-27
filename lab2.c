@@ -41,13 +41,12 @@ void *network_thread_f(void *);
 int convert_key(uint8_t mod, uint8_t key);
 int fb_place;
 
-int clear(int r, int rs, int c, int cs) {
+clear(int r, int rs, int c, int cs) {
   for (int col = cs; col < c; col++) {
     for (int row = rs; row < r; row++) {
       fbputchar(' ', row, col);
     }
   }
-  return 1;
 }
 
 int checkcurr(int row, int col) {
@@ -123,7 +122,7 @@ int main()
   pthread_create(&network_thread, NULL, network_thread_f, NULL);
 
   /* Look for and handle keypresses */
-  int key, state, buf_end, ret;
+  int key, state, buf_end;
   char hold;
   char sendbuf[BUFFER_SIZE];
   buf_end = 0;
@@ -175,9 +174,9 @@ int main()
 	    fb_place++;
 	    if(fb_place >= 19) fb_place = 8;
 	    memset(sendbuf, ' ', sizeof(sendbuf));
-	    sendbuf[BUFFER_SIZE - 1] = '\n';
-	    fbputs(sendbuf, fb_place, 0);	    
-	    clear(23,21,64,0);
+	    sendbuf[BUFFER_SIZE - 1] = 0;//'\n';
+	    //fbputs(sendbuf, fb_place, 0);	    
+	    //clear(23,21,64,0);
 	    cur_col = 0;
 	    buff_col = 0;
 	    cur_row = 21;
@@ -206,7 +205,7 @@ int main()
 	  }
 	}
       }
-      ret = clear(23,21,64,0);
+      clear(23,21,64,0);
       fbputs(sendbuf, cur_row, 0);
       hold = sendbuf[buff_col];
       fbputchar('_', cur_row, cur_col);
@@ -281,6 +280,33 @@ int convert_key(uint8_t mod, uint8_t key) {
   else if (key == 79) ikey = 3; //right arrow
   else if (key == 80) ikey = 2; //left arrow
   else if (key == 40) ikey = 1; //enter
+  else if (ikey >= 45 && ikey <= 56) { //special characters
+    if (imod == 2 || imode == 32) {
+      if (ikey == 45) ikey = 95 // _
+      if (ikey == 46) ikey = 43 // +
+      if (ikey == 47) ikey = 123 // {
+      if (ikey == 48) ikey = 125 // }
+      if (ikey == 49) ikey = 124 // |
+      if (ikey == 51) ikey = 58 // :
+      if (ikey == 52) ikey = 34 // "
+      if (ikey == 53) ikey = 126 // ~
+      if (ikey == 54) ikey = 60 // <
+      if (ikey == 55) ikey = 62 // >
+      if (ikey == 56) ikey = 63 // ?
+  } else {
+      if (ikey == 45) ikey = 45 // -
+      if (ikey == 46) ikey = 61 // =
+      if (ikey == 47) ikey = 91 // [
+      if (ikey == 48) ikey = 93 // ]
+      if (ikey == 49) ikey = 92 // '\'
+      if (ikey == 51) ikey = 59 // ;
+      if (ikey == 52) ikey = 39 // '
+      if (ikey == 53) ikey = 96 // `
+      if (ikey == 54) ikey = 44 // ,
+      if (ikey == 55) ikey = 46 // .
+      if (ikey == 56) ikey = 47 // /
+			}
+  }
   else ikey = 0;
   return ikey;
 }
