@@ -51,11 +51,11 @@ void clear(int r, int rs, int c, int cs) {
 int checkcurr(int row, int col) {
   if (row == 21) {
     if (col == 0) return 1;
-    if (col == 64) return 2;
+    if (col == 63) return 2;
   } else if(row == 22) {
     if (col == 0) return 3;
-    if (col == 64) return 4;
-  } else return 0;
+    if (col == 63) return 4;
+  } return 0;
 }
   
 
@@ -86,7 +86,7 @@ int main()
   }
   cur_col = 0;
   cur_row = 21;
-  buff_coll = 0;
+  buff_col = 0;
 
   fbputs("Hello CSEE 4840 World!", 4, 10);
 
@@ -133,23 +133,24 @@ int main()
 	      packet.keycode[1]);
       printf("%s\n", keystate);
       state = checkcurr(cur_row, cur_col);
+      printf("row: %d, col: %d, state: %d\n", cur_row, cur_col, state);
       key = convert_key(packet.modifiers, packet.keycode[0]);
       if (key != 0) {
 	if (key != 1 && key != 2 && key != 3 && key != 8 && state != 4) {
 	  //fbputchar(' ', cur_row, cur_col);
 	    fbputchar(key, cur_row, cur_col);
 	    sendbuf[buff_col] = key;
-	    if (state = 2) {
+	    if (state == 2) {
 	      cur_col = 0;
 	      cur_row = 22;
 	    } else cur_col++;
-	    buf_col++;
+	    buff_col++;
 	  //if (packet.keycode[0] != 0x00) cur_col++;
 	} else {
 	  if (key == 8) { //backspace
 	    if(state != 1) {
 	      fbputchar(hold, cur_row, cur_col);
-	      if(state = 3) {
+	      if(state == 3) {
 		cur_col = 64;
 		cur_row = 21;
 	      } else cur_col--;
@@ -171,7 +172,7 @@ int main()
 	    if(state != 1) {
 	      fbputchar(hold, cur_row, cur_col);
 	      buff_col--;
-	      if(state = 3) {
+	      if(state == 3) {
 		cur_col = 64;
 		cur_row = 21;
 	      } else cur_col--;
@@ -181,10 +182,10 @@ int main()
 	    if (cur_col < strlen(sendbuf) - 1) {
 	      fbputchar(hold, cur_row, cur_col);
 	      buff_col++;
-	      if(state = 2) {
+	      if(state == 2) {
 		cur_col = 0;
 		cur_row = 22;
-	      } else cur_row++;
+	      } else cur_col++;
 	    }
 	  }
 	}
