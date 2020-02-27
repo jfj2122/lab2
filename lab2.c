@@ -41,12 +41,12 @@ void *network_thread_f(void *);
 int convert_key(uint8_t mod, uint8_t key);
 
 void clear(int r, int rs, int c, int cs) {
-  for (col = cs; col < c; col++) {
-    for (row = rs; row < r; row++) {
-      fputchar(' ', row, col);
+  for (int col = cs; col < c; col++) {
+    for (int row = rs; row < r; row++) {
+      fbputchar(' ', row, col);
     }
   }
-  	    
+}    
   
 
 int main()
@@ -110,12 +110,8 @@ int main()
 
   /* Look for and handle keypresses */
   char hold = ' ';
-  char curr;
-  int key;
   char sendbuf[BUFFER_SIZE];
   for (;;) {
-    if (curr == '_') curr = hold;
-    else curr == '_';
     libusb_interrupt_transfer(keyboard, endpoint_address,
 			      (unsigned char *) &packet, sizeof(packet),
 			      &transferred, 0);
@@ -142,8 +138,7 @@ int main()
 	  
 	}
       }
-      hold = sendbuf[cur_col];
-      fbputchar(cur, 22, cur_col);
+      fbputchar('_', 22, cur_col);
       fbputs(keystate, 6, 0);
       if (packet.keycode[0] == 0x29) { /* ESC pressed? */
 	break;
