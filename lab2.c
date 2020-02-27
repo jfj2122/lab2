@@ -123,7 +123,7 @@ int main()
 
   /* Look for and handle keypresses */
   int key, state, buf_end;
-  char hold;
+  //char hold;
   char sendbuf[BUFFER_SIZE];
   buf_end = 0;
   for (;;) {
@@ -140,7 +140,7 @@ int main()
       if (key != 0) {
 	if (key != 1 && key != 2 && key != 3 && key != 8 && state != 4) {
 	  //fbputchar(' ', cur_row, cur_col);
-	    fbputchar(key, cur_row, cur_col);
+	  //fbputchar(key, cur_row, cur_col);
 	    sendbuf[buff_col] = key;
 	    if (state == 2) {
 	      cur_col = 0;
@@ -162,7 +162,7 @@ int main()
 	      buff_col--;
 	      buf_end--;
 	      //sendbuf[buff_col] = ' ';
-	      fbputs(sendbuf, cur_row, 0);
+	      //fbputs(sendbuf, cur_row, 0);
 	    }
 	  }
 	  else if (key == 1) { // enter
@@ -176,7 +176,7 @@ int main()
 	    memset(sendbuf, ' ', sizeof(sendbuf));
 	    sendbuf[BUFFER_SIZE - 1] = '\n';
 	    fbputs(sendbuf, fb_place, 0);	    
-	    clear(23,21,64,0);
+	    //clear(23,21,64,0);
 	    cur_col = 0;
 	    buff_col = 0;
 	    cur_row = 21;
@@ -185,7 +185,7 @@ int main()
 	  }
 	  else if (key == 2) { //left arrow
 	    if(state != 1) {
-	      fbputchar(hold, cur_row, cur_col);
+	      //fbputchar(hold, cur_row, cur_col);
 	      buff_col--;
 	      if(state == 3) {
 		cur_col = 64;
@@ -195,7 +195,7 @@ int main()
 	  }
 	  else if (key == 3) {
 	    if (cur_col < buf_end) {
-	      fbputchar(hold, cur_row, cur_col);
+	      //fbputchar(hold, cur_row, cur_col);
 	      buff_col++;
 	      if(state == 2) {
 		cur_col = 0;
@@ -207,7 +207,7 @@ int main()
       }
       clear(23,21,64,0);
       fbputs(sendbuf, cur_row, 0);
-      hold = sendbuf[buff_col];
+      //hold = sendbuf[buff_col];
       fbputchar('_', cur_row, cur_col);
       fbputs(keystate, 6, 0);
       fprintf(stderr, "bufpos: %d \nbuffer: %s\n", buff_col, sendbuf);
