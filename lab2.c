@@ -152,15 +152,17 @@ int main()
 	} else {
 	  if (key == 8) { //backspace
 	    if(state != 1) {
-	      fbputchar(hold, cur_row, cur_col);
-	      //memcpy(send_buf, 
+	      //fbputchar(hold, cur_row, cur_col);
+	      memcpy(sendbuf[buff_col - 1], sendbuf[buff_col], )buf_end - buf_col) + 1);
 	      if(state == 3) {
 		cur_col = 63;
 		cur_row = 21;
 		} else cur_col--;
-	      if (buff_col == buf_end) buf_end--;
+	      //if (buff_col == buf_end) buf_end--;
 	      buff_col--;
-	      sendbuf[buff_col] = ' ';
+	      buff_end--;
+	      //sendbuf[buff_col] = ' ';
+	      fbputs(sendbuf, cur_row, 0);
 	    }
 	  }
 	  else if (key == 1) { // enter
