@@ -153,14 +153,14 @@ void *network_thread_f(void *ignored)
 
 int convert_key(uint8_t mod, uint8_t key) {
   //int out;
-  fprintf(stderr, "in convert key/n");
-  int ikey = strtol((const char *) key, NULL, 10);
-  fprintf(stderr, "convert 1");
-  int imod = strtol((const char *) mod, NULL, 10);;
-  fprintf(stderr, "convert both");
+  fprintf(stderr, "in convert key\n");
+  int ikey = (int) key;//strtol((const char *) key, NULL, 10);
+  fprintf(stderr, "convert 1\n");
+  int imod = (int) mod;//strtol((const char *) mod, NULL, 10);;
+  fprintf(stderr, "convert both\n");
   if (ikey >= 4 && ikey <= 29) {
     ikey = ikey + 93;
-    fprintf(stderr, "ikey is %d", ikey);
+    fprintf(stderr, "ikey is %d\n", ikey);
     if (imod == 2) ikey = ikey - 32;
   }
   else ikey = 0;
