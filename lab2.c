@@ -124,7 +124,7 @@ int main()
   /* Look for and handle keypresses */
   int key, state, buf_end;
   char hold;
-  char sendbuf[BUFFER_SIZE];
+  char *sendbuf;
   buf_end = 0;
   for (;;) {
     libusb_interrupt_transfer(keyboard, endpoint_address,
@@ -153,14 +153,14 @@ int main()
 	  if (key == 8) { //backspace
 	    if(state != 1) {
 	      //fbputchar(hold, cur_row, cur_col);
-	      memcpy(sendbuf[buff_col - 1], sendbuf[buff_col], )buf_end - buf_col) + 1);
+	      memcpy(sendbuf[buff_col - 1], sendbuf[buff_col], (buf_end - buf_col) + 1);
 	      if(state == 3) {
 		cur_col = 63;
 		cur_row = 21;
 		} else cur_col--;
 	      //if (buff_col == buf_end) buf_end--;
 	      buff_col--;
-	      buff_end--;
+	      buf_end--;
 	      //sendbuf[buff_col] = ' ';
 	      fbputs(sendbuf, cur_row, 0);
 	    }
