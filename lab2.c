@@ -2,7 +2,7 @@
  *
  * CSEE 4840 Lab 2 for 2019
  *
- * Name/UNI: Please Changeto Yourname (pcy2301)
+ * JJ & BW
  */
 #include "fbputchar.h"
 #include <stdio.h>
@@ -46,13 +46,23 @@ void clear(int r, int rs, int c, int cs) {
       fbputchar(' ', row, col);
     }
   }
-}    
+}
+
+int checkcurr(int row, int col) {
+  if (row == 21) {
+    if (col == 0) return 1;
+    if (col == 64) return 2;
+  } else if(row == 22) {
+    if (col == 0) return 3;
+    if (col == 64) return 4;
+  } else return 0;
+}
   
 
 int main()
 {
   //delete cur_row
-  int err, col, cur_row, cur_col;
+  int err, col, cur_row, cur_col, buff_col;
   
   struct sockaddr_in serv_addr;
 
@@ -76,6 +86,7 @@ int main()
   }
   cur_col = 0;
   cur_row = 21;
+  buff_coll = 0;
 
   fbputs("Hello CSEE 4840 World!", 4, 10);
 
@@ -110,7 +121,7 @@ int main()
   pthread_create(&network_thread, NULL, network_thread_f, NULL);
 
   /* Look for and handle keypresses */
-  int key;
+  int key, state;
   char hold;
   char sendbuf[BUFFER_SIZE];
   for (;;) {
@@ -121,47 +132,68 @@ int main()
       sprintf(keystate, "%02x %02x %02x", packet.modifiers, packet.keycode[0],
 	      packet.keycode[1]);
       printf("%s\n", keystate);
+      state = checkcurr(cur_row, cur_col);
       key = convert_key(packet.modifiers, packet.keycode[0]);
       if (key != 0) {
-	if (key != 1 && key != 2 && key != 3 && key != 8) {
-	  fbputchar(' ', 21, cur_col);
-	  fbputchar(key, 21, cur_col);
-	  sendbuf[cur_col] = key;
-	  if (packet.keycode[0] != 0x00) cur_col++;
+	if (key != 1 && key != 2 && key != 3 && key != 8 && state != 4) {
+	  //fbputchar(' ', cur_row, cur_col);
+	    fbputchar(key, cur_row, cur_col);
+	    sendbuf[buff_col] = key;
+	    if (state = 2) {
+	      cur_col = 0;
+	      cur_row = 22;
+	    } else cur_col++;
+	    buf_col++;
+	  //if (packet.keycode[0] != 0x00) cur_col++;
 	} else {
-	  if (key == 8) { //need to check not in middle of text
-	    fbputchar(hold, 22, cur_col);
-	    cur_col--;
-	    sendbuf[cur_col] = ' ';
+	  if (key == 8) { //backspace
+	    if(state != 1) {
+	      fbputchar(hold, cur_row, cur_col);
+	      if(state = 3) {
+		cur_col = 64;
+		cur_row = 21;
+	      } else cur_col--;
+	      buff_col--;
+	      sendbuf[buff_col] = ' ';
+	    }
 	  }
-	  else if (key == 1) {
+	  else if (key == 1) { // enter
 	    sendbuf[cur_col] = 0;
 	    fprintf(stderr, "%s\n", sendbuf);
 	    write(sockfd, sendbuf, BUFFER_SIZE);
 	    clear(23,21,64,0);
 	    cur_col = 0;
+	    buff_col = 0;
+	    cur_row = 21;
 	    sendbuf[0] = 0;
 	  }
-	  else if (key == 2) {
-	    if (cur_col != 0) {
-	      fbputchar(hold, 22, cur_col);
-	      cur_col--;
+	  else if (key == 2) { //left arrow
+	    if(state != 1) {
+	      fbputchar(hold, cur_row, cur_col);
+	      buff_col--;
+	      if(state = 3) {
+		cur_col = 64;
+		cur_row = 21;
+	      } else cur_col--;
 	    }
 	  }
 	  else if (key == 3) {
-	    if (cur_col <= strlen(sendbuf)) {
-	      fbputchar(hold, 22, cur_col);
-	      cur_col++;
+	    if (cur_col < strlen(sendbuf) - 1) {
+	      fbputchar(hold, cur_row, cur_col);
+	      buff_col++;
+	      if(state = 2) {
+		cur_col = 0;
+		cur_row = 22;
+	      } else cur_row++;
 	    }
 	  }
 	}
       }
-      hold = sendbuf[cur_col];
-      fbputchar('_', 22, cur_col);
+      hold = sendbuf[buff_col];
+      fbputchar('_', cur_row, cur_col);
       fbputs(keystate, 6, 0);
       if (packet.keycode[0] == 0x29) { /* ESC pressed? */
 	break;
-	
       }
     }
   }
@@ -204,7 +236,7 @@ int convert_key(uint8_t mod, uint8_t key) {
     ikey = ikey + 93;
     fprintf(stderr, "ikey is %d\n", ikey);
     if (imod == 2) ikey = ikey - 32;
-  }}
+  }
   else if (key == 42) ikey = 8; //backspace
   else if (key == 44) ikey = 32; //space
   else if (key == 79) ikey = 3; //right arrow
