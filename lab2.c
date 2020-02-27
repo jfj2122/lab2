@@ -215,6 +215,7 @@ int main()
 	fbputs(half2, 22, 0);
 	//memcpy(half1, sendbuf, 64);
 	strncpy(half1, sendbuf, 64);
+	half1[63] = 0;
 	fbputs(half1, 21, 0);
 	fprintf(stderr, "\n\n str 1: %s\nstr 2: %s\n\n", half1, half2);
       } else fbputs(sendbuf, 21, 0);
