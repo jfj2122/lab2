@@ -109,7 +109,7 @@ int main()
   pthread_create(&network_thread, NULL, network_thread_f, NULL);
 
   /* Look for and handle keypresses */
-  char hold = ' ';
+  int key;
   char sendbuf[BUFFER_SIZE];
   for (;;) {
     libusb_interrupt_transfer(keyboard, endpoint_address,
@@ -127,7 +127,10 @@ int main()
 	  sendbuf[cur_col] = key;
 	  if (packet.keycode[0] != 0x00) cur_col++;
 	} else {
-	  if (key == 8) cur_col--;
+	  if (key == 8) { //need to check not in middle of text
+	    if(!sendbuf[cur_col]) fbputchar(' ', 22 cur_col);
+	    cur_col--;
+	  }
 	  if (key == 1) {
 	    sendbuf[cur_col] = 0;
 	    fprintf(stderr, "%s\n", sendbuf);
