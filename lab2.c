@@ -38,7 +38,7 @@ uint8_t endpoint_address;
 
 pthread_t network_thread;
 void *network_thread_f(void *);
-int convert_key(char* mod, char* key);
+int convert_key(uint8_t mod, uint8_t key);
 
 int main()
 {
@@ -151,16 +151,16 @@ void *network_thread_f(void *ignored)
   return NULL;
 }
 
-int convert_key(uint8_t mod, uint8_ t key) {
+int convert_key(uint8_t mod, uint8_t key) {
   //int out;
-  printf("in convert key/n");
-  int ikey = atoi((const char *) key);
-  printf("convert 1");
-  int imod = atoi((const char *) mod);
-  printf("convert both");
+  fprintf(stderr, "in convert key/n");
+  int ikey = strtol((const char *) key, NULL, 10);
+  fprintf(stderr, "convert 1");
+  int imod = strtol((const char *) mod, NULL, 10);;
+  fprintf(stderr, "convert both");
   if (ikey >= 4 && ikey <= 29) {
     ikey = ikey + 93;
-    printf("ikey is %d", ikey);
+    fprintf(stderr, "ikey is %d", ikey);
     if (imod == 2) ikey = ikey - 32;
   }
   else ikey = 0;
