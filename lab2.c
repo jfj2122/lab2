@@ -206,7 +206,7 @@ int main()
 	  }
 	}
       }
-      clear(23,21,64,0);
+      //clear(23,21,64,0);
       fbputs(sendbuf, cur_row, 0);
       hold = sendbuf[buff_col];
       fbputchar('_', cur_row, cur_col);
