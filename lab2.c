@@ -162,7 +162,7 @@ int main()
 	      buff_col--;
 	      buf_end--;
 	      //sendbuf[buff_col] = ' ';
-	      //fbputs(sendbuf, cur_row, 0);
+	      fbputs(sendbuf, cur_row, 0);
 	    }
 	  }
 	  else if (key == 1) { // enter
@@ -194,7 +194,7 @@ int main()
 	    }
 	  }
 	  else if (key == 3) {
-	    if (cur_col < buf_end - 1) {
+	    if (cur_col < buf_end) {
 	      fbputchar(hold, cur_row, cur_col);
 	      buff_col++;
 	      if(state == 2) {
