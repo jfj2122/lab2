@@ -210,11 +210,10 @@ int main()
       }
       clear(23,21,64,0);
       if (strlen(sendbuf) >= 64) {
-	memcpy(half1, sendbuf, 64);
-	memcpy(hlaf2, sendbuf + 64, 64);
-	fbputs(half1, 21, 0);
+	memcpy(half2, sendbuf + 64, 64);
 	fbputs(half2, 22, 0);
-      } else fbputs(sendbuf, 21, 0);
+      }
+      fbputs(sendbuf, 21, 0);
       hold = sendbuf[buff_col];
       fbputchar('_', cur_row, cur_col);
       fbputs(keystate, 6, 0);
