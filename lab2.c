@@ -150,10 +150,11 @@ int main()
 	  if (key == 8) { //backspace
 	    if(state != 1) {
 	      fbputchar(hold, cur_row, cur_col);
-	      /*if(state == 3) {
+	      if(state == 3) {
+		fprintf(stderr, "in if, state: %d", state);
 		cur_col = 63;
 		cur_row = 21;
-		} */else cur_col--;
+		} else cur_col--;
 	      buff_col--;
 	      sendbuf[buff_col] = ' ';
 	    }
