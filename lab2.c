@@ -41,12 +41,13 @@ void *network_thread_f(void *);
 int convert_key(uint8_t mod, uint8_t key);
 int fb_place;
 
-void clear(int r, int rs, int c, int cs) {
+int clear(int r, int rs, int c, int cs) {
   for (int col = cs; col < c; col++) {
     for (int row = rs; row < r; row++) {
       fbputchar(' ', row, col);
     }
   }
+  return 1;
 }
 
 int checkcurr(int row, int col) {
@@ -122,7 +123,7 @@ int main()
   pthread_create(&network_thread, NULL, network_thread_f, NULL);
 
   /* Look for and handle keypresses */
-  int key, state, buf_end;
+  int key, state, buf_end, ret;
   //char hold;
   char sendbuf[BUFFER_SIZE];
   buf_end = 0;
@@ -205,7 +206,7 @@ int main()
 	  }
 	}
       }
-      clear(23,21,64,0);
+      ret = clear(23,21,64,0);
       fbputs(sendbuf, cur_row, 0);
       //hold = sendbuf[buff_col];
       fbputchar('_', cur_row, cur_col);
