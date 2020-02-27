@@ -39,7 +39,7 @@ uint8_t endpoint_address;
 pthread_t network_thread;
 void *network_thread_f(void *);
 int convert_key(uint8_t mod, uint8_t key);
-int fb_place, int flag;
+int fb_place, flag;
 
 void clear(int r, int rs, int c, int cs) {
   //fprintf(stderr, "clear called!!\n");
@@ -241,7 +241,7 @@ int main()
   return 0;
 }
 
-pvoid *network_thread_f(void *ignored)
+void *network_thread_f(void *ignored)
 {
   char recvBuf[BUFFER_SIZE];
   int n;
@@ -275,7 +275,7 @@ int convert_key(uint8_t mod, uint8_t key) {
       flag = 1;
     }
   }
-  else if (ikey == 0 && imod == 0 && flag == 1) flag = 0;
+  else if (ikey == 0 && imod == 0 && flag == 1) flag = 0; //reset flag
   else if (ikey >= 30 && ikey <= 39) { //numbers
     if (imod == 2 || imod == 32 ) {
       if (ikey == 30) ikey = 33; // !
