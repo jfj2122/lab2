@@ -126,6 +126,8 @@ int main()
   int key, state, buf_end;
   char hold;
   char sendbuf[BUFFER_SIZE];
+  char half1[BUFFER_SIZE/2];
+  char half2[BUFFER_SIZE/2];
   buf_end = 0;
   for (;;) {
     libusb_interrupt_transfer(keyboard, endpoint_address,
@@ -207,7 +209,12 @@ int main()
 	}
       }
       clear(23,21,64,0);
-      fbputs(sendbuf, 21, 0);
+      if (strlen(sendbuf) >= 64) {
+	memcpy(half1, sendbuf, 64);
+	memcpy(hlaf2, sendbuf + 64, 64);
+	fbputs(half1, 21, 0);
+	fbputs(half2, 22, 0);
+      } else fbputs(sendbuf, 21, 0);
       hold = sendbuf[buff_col];
       fbputchar('_', cur_row, cur_col);
       fbputs(keystate, 6, 0);
