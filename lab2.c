@@ -282,29 +282,29 @@ int convert_key(uint8_t mod, uint8_t key) {
   else if (key == 40) ikey = 1; //enter
   else if (ikey >= 45 && ikey <= 56) { //special characters
     if (imod == 2 || imode == 32) {
-      if (ikey == 45) ikey = 95 // _
-      if (ikey == 46) ikey = 43 // +
-      if (ikey == 47) ikey = 123 // {
-      if (ikey == 48) ikey = 125 // }
-      if (ikey == 49) ikey = 124 // |
-      if (ikey == 51) ikey = 58 // :
-      if (ikey == 52) ikey = 34 // "
-      if (ikey == 53) ikey = 126 // ~
-      if (ikey == 54) ikey = 60 // <
-      if (ikey == 55) ikey = 62 // >
-      if (ikey == 56) ikey = 63 // ?
+      if (ikey == 45) ikey = 95; // _
+      if (ikey == 46) ikey = 43; // +
+      if (ikey == 47) ikey = 123; // {
+      if (ikey == 48) ikey = 125; // }
+      if (ikey == 49) ikey = 124; // |
+      if (ikey == 51) ikey = 58; // :
+      if (ikey == 52) ikey = 34; // "
+      if (ikey == 53) ikey = 126; // ~
+      if (ikey == 54) ikey = 60; // <
+      if (ikey == 55) ikey = 62; // >
+      if (ikey == 56) ikey = 63; // ?
   } else {
-      if (ikey == 45) ikey = 45 // -
-      if (ikey == 46) ikey = 61 // =
-      if (ikey == 47) ikey = 91 // [
-      if (ikey == 48) ikey = 93 // ]
-      if (ikey == 49) ikey = 92 // '\'
-      if (ikey == 51) ikey = 59 // ;
-      if (ikey == 52) ikey = 39 // '
-      if (ikey == 53) ikey = 96 // `
-      if (ikey == 54) ikey = 44 // ,
-      if (ikey == 55) ikey = 46 // .
-      if (ikey == 56) ikey = 47 // /
+      if (ikey == 45) ikey = 45; // -
+      if (ikey == 46) ikey = 61; // =
+      if (ikey == 47) ikey = 91; // [
+      if (ikey == 48) ikey = 93; // ]
+      if (ikey == 49) ikey = 92; // '\'
+      if (ikey == 51) ikey = 59; // ;
+      if (ikey == 52) ikey = 39; // '
+      if (ikey == 53) ikey = 96; // `
+      if (ikey == 54) ikey = 44; // ,
+      if (ikey == 55) ikey = 46; // .
+      if (ikey == 56) ikey = 47; // /
 			}
   }
   else ikey = 0;
