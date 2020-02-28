@@ -121,20 +121,18 @@ int main()
   }
 
   //mutex intiation 
-  /*if (pthread_mutex_init(&lock, NULL) != 0) {
+  if (pthread_mutex_init(&lock, NULL) != 0) {
     fprintf(stderr, "Could not initiate mutex");
     exit(1);
-    }*/
-  pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
-  //pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
-  //valid = 0;
+  }
+
 
   /* Start the network thread */
   pthread_create(&network_thread, NULL, network_thread_f, NULL);
 
   /* Look for and handle keypresses */
   int key, state, buf_end;
-  char hold;
+  //char hold;
   char sendbuf[BUFFER_SIZE];
   memset(sendbuf, 0, BUFFER_SIZE);
   char half1[BUFFER_SIZE/2 + 1];
@@ -150,12 +148,12 @@ int main()
 	      packet.keycode[1]);
       printf("%s\n", keystate);
       state = checkcurr(cur_row, cur_col);
-      printf("row: %d, col: %d, state: %d\n", cur_row, cur_col, state);
+      //printf("row: %d, col: %d, state: %d\n", cur_row, cur_col, state);
       key = convert_key(packet.modifiers, packet.keycode[0]);
       if (key != 0) {
 	if (key != 1 && key != 2 && key != 3 && key != 8 && state != 4) {
-	  fbputchar(' ', cur_row, cur_col);
-	  fbputchar(key, cur_row, cur_col);
+	  //fbputchar(' ', cur_row, cur_col);
+	  //fbputchar(key, cur_row, cur_col);
 	    sendbuf[buff_col] = key;
 	    if (state == 2) {
 	      cur_col = 0;
@@ -177,15 +175,13 @@ int main()
 	  }
 	  else if (key == 1) { // enter
 	    sendbuf[buf_end] = 0;
-	    fprintf(stderr, "%s\n", sendbuf);
+	    //fprintf(stderr, "%s\n", sendbuf);
 	    write(sockfd, sendbuf, BUFFER_SIZE);
 	    pthread_mutex_lock(&lock);
-	    //while (valid) pthread_cond_wait(&cond, &lock);
 	    fbputs("ME: ", fb_place, 0);
 	    fbputs( sendbuf, fb_place, 4);
 	    fb_place++;
 	    if(fb_place >= 19) fb_place = 8;
-	    //pthread_cond_signal(&cond);
 	    pthread_mutex_unlock(&lock);
 	    memset(sendbuf, ' ', sizeof(sendbuf));
 	    sendbuf[BUFFER_SIZE - 1] = 0;//'\n';
@@ -198,7 +194,7 @@ int main()
 	  }
 	  else if (key == 2) { //left arrow
 	    if(state != 1) {
-	      fbputchar(hold, cur_row, cur_col);
+	      //fbputchar(hold, cur_row, cur_col);
 	      buff_col--;
 	      if(state == 3) {
 		cur_col = 64;
@@ -208,7 +204,7 @@ int main()
 	  }
 	  else if (key == 3) {
 	    if (cur_col < buf_end) {
-	      fbputchar(hold, cur_row, cur_col);
+	      //fbputchar(hold, cur_row, cur_col);
 	      buff_col++;
 	      if(state == 2) {
 		cur_col = 0;
@@ -227,10 +223,10 @@ int main()
 	fbputs(half1, 21, 0);
 	fprintf(stderr, "\n\n str 1: %s\nstr 2: %s\n\n", half1, half2);
       } else fbputs(sendbuf, 21, 0);
-      hold = sendbuf[buff_col];
+      //hold = sendbuf[buff_col];
       fbputchar('_', cur_row, cur_col);
       fbputs(keystate, 6, 0);
-      fprintf(stderr, "bufpos: %d \nbuffer: %s\n", buff_col, sendbuf);
+      //fprintf(stderr, "bufpos: %d \nbuffer: %s\n", buff_col, sendbuf);
       if (packet.keycode[0] == 0x29) { /* ESC pressed? */
 	break;
       }
@@ -250,19 +246,15 @@ void *network_thread_f(void *ignored)
 {
   char recvBuf[BUFFER_SIZE];
   int n;
-  //int place = 8;
   fb_place = 8;
   /* Receive data */
   while ( (n = read(sockfd, &recvBuf, BUFFER_SIZE - 1)) > 0 ) {
     recvBuf[n] = '\0';
     printf("%s", recvBuf);
     pthread_mutex_lock(&lock);
-    //while (valid) pthread_cond_wait(&cond, &lock)
     fbputs(recvBuf, fb_place, 0);
-    //if (strlen(recvBuf) > 64) place++;
     fb_place++;
     if (fb_place >= 20) fb_place = 8;
-    //pthread_cond_signal(&cond);
     pthread_mutex_unlock(&lock);
     memset(recvBuf, ' ', sizeof(recvBuf));
     recvBuf[BUFFER_SIZE - 1] = '\n';
