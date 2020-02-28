@@ -132,7 +132,6 @@ int main()
 
   /* Look for and handle keypresses */
   int key, state, buf_end;
-  //char hold;
   char sendbuf[BUFFER_SIZE];
   memset(sendbuf, 0, BUFFER_SIZE);
   char half1[BUFFER_SIZE/2 + 1];
@@ -146,14 +145,11 @@ int main()
     if (transferred == sizeof(packet)) {
       sprintf(keystate, "%02x %02x %02x", packet.modifiers, packet.keycode[0],
 	      packet.keycode[1]);
-      printf("%s\n", keystate);
+      //printf("%s\n", keystate);
       state = checkcurr(cur_row, cur_col);
-      //printf("row: %d, col: %d, state: %d\n", cur_row, cur_col, state);
-      key = convert_key(packet.modifiers, packet.keycode[0]);
+      key = convert_key(packet.modifiers, packet.keycode[0], packet.keycode[1]);
       if (key != 0) {
 	if (key != 1 && key != 2 && key != 3 && key != 8 && state != 4) {
-	  //fbputchar(' ', cur_row, cur_col);
-	  //fbputchar(key, cur_row, cur_col);
 	    sendbuf[buff_col] = key;
 	    if (state == 2) {
 	      cur_col = 0;
@@ -175,7 +171,6 @@ int main()
 	  }
 	  else if (key == 1) { // enter
 	    sendbuf[buf_end] = 0;
-	    //fprintf(stderr, "%s\n", sendbuf);
 	    write(sockfd, sendbuf, BUFFER_SIZE);
 	    pthread_mutex_lock(&lock);
 	    fbputs("ME: ", fb_place, 0);
@@ -194,7 +189,6 @@ int main()
 	  }
 	  else if (key == 2) { //left arrow
 	    if(state != 1) {
-	      //fbputchar(hold, cur_row, cur_col);
 	      buff_col--;
 	      if(state == 3) {
 		cur_col = 64;
@@ -204,7 +198,6 @@ int main()
 	  }
 	  else if (key == 3) {
 	    if (cur_col < buf_end) {
-	      //fbputchar(hold, cur_row, cur_col);
 	      buff_col++;
 	      if(state == 2) {
 		cur_col = 0;
@@ -221,12 +214,9 @@ int main()
 	strncpy(half1, sendbuf, 64);
 	half1[64] = 0;
 	fbputs(half1, 21, 0);
-	fprintf(stderr, "\n\n str 1: %s\nstr 2: %s\n\n", half1, half2);
       } else fbputs(sendbuf, 21, 0);
-      //hold = sendbuf[buff_col];
       fbputchar('_', cur_row, cur_col);
       fbputs(keystate, 6, 0);
-      //fprintf(stderr, "bufpos: %d \nbuffer: %s\n", buff_col, sendbuf);
       if (packet.keycode[0] == 0x29) { /* ESC pressed? */
 	break;
       }
@@ -264,21 +254,23 @@ void *network_thread_f(void *ignored)
   return NULL;
 }
 
-int convert_key(uint8_t mod, uint8_t key) {
+int convert_key(uint8_t mod, uint8_t key, uint8_t key2) {
   int ikey = (int) key;
   int imod = (int) mod;
+  int ikey2 = (int) key2;
+  if (ikey2 > 0 && flag == 2) flag = 4;
   if (ikey >= 4 && ikey <= 29) { // letters
-    if ((imod == 2 || imod == 32) && flag != 2) { // capital
+    if ((imod == 2 || imod == 32) && (flag != 2 || flag != 4)) { // capital
       ikey = ikey + 61;
       flag = 1;
     }
-    else if(flag == 0) { // lower case
+    else if(flag == 0 || flag == 4) { // lower case
       ikey = ikey + 93;
       flag = 2;
     }
     else ikey = 0;
   }
-  else if (ikey == 0 && imod == 0 && (flag == 1 || flag == 2)) flag = 0; //reset flag
+  else if (ikey == 0 && imod == 0 && (flag == 1 || flag == 2 || flag == 4)) flag = 0; //reset flag
   else if (ikey >= 30 && ikey <= 39) { //numbers
     if (imod == 2 || imod == 32 ) {
       if (ikey == 30) ikey = 33; // !
