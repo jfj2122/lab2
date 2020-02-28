@@ -38,7 +38,7 @@ uint8_t endpoint_address;
 
 pthread_t network_thread;
 void *network_thread_f(void *);
-int convert_key(uint8_t mod, uint8_t key);
+int convert_key(uint8_t mod, uint8_t key, uint8_t key2);
 int fb_place, flag;
 pthread_mutex_t lock;
 pthread_cond_t cond;
@@ -216,7 +216,7 @@ int main()
 	fbputs(half1, 21, 0);
       } else fbputs(sendbuf, 21, 0);
       fbputchar('_', cur_row, cur_col);
-      fbputs(keystate, 6, 0);
+      //fbputs(keystate, 6, 0);
       if (packet.keycode[0] == 0x29) { /* ESC pressed? */
 	break;
       }
@@ -260,7 +260,7 @@ int convert_key(uint8_t mod, uint8_t key, uint8_t key2) {
   int ikey2 = (int) key2;
   if (ikey2 > 0 && flag == 2) flag = 4;
   if (ikey >= 4 && ikey <= 29) { // letters
-    if ((imod == 2 || imod == 32) && (flag != 2 || flag != 4)) { // capital
+    if ((imod == 2 || imod == 32) && (flag != 2 && flag != 4)) { // capital
       ikey = ikey + 61;
       flag = 1;
     }
