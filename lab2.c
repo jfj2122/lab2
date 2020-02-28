@@ -270,13 +270,17 @@ int convert_key(uint8_t mod, uint8_t key) {
   if (ikey >= 4 && ikey <= 29) { // letters
     //ikey = ikey + 93;
     //fprintf(stderr, "ikey is %d\n", ikey);
-    if (imod == 2 || imod == 32 ) {
-      ikey = ikey - 61;
+    if (imod == 2 || imod == 32 && flag != 2) {
+      ikey = ikey + 61;
       flag = 1;
     }
-    else if(flag == 0) ikey = ikey + 93;
+    else if(flag == 0) {
+      ikey = ikey + 93;
+      flag = 2;
+    }
+    else ikey = 0;
   }
-  else if (ikey == 0 && imod == 0 && flag == 1) flag = 0; //reset flag
+  else if (ikey == 0 && imod == 0 && (flag == 1 || flag == 2) flag = 0; //reset flag
   else if (ikey >= 30 && ikey <= 39) { //numbers
     if (imod == 2 || imod == 32 ) {
       if (ikey == 30) ikey = 33; // !
