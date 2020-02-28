@@ -42,6 +42,7 @@ int convert_key(uint8_t mod, uint8_t key);
 int fb_place, flag;
 pthread_mutex_t lock;
 pthread_cond_t cond;
+int valid;
 
 void clear(int r, int rs, int c, int cs) {
   for (int col = cs; col < c; col++) {
@@ -125,7 +126,8 @@ int main()
     exit(1);
     }*/
   pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
-  pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+  //pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+  //valid = 0;
 
   /* Start the network thread */
   pthread_create(&network_thread, NULL, network_thread_f, NULL);
@@ -178,12 +180,12 @@ int main()
 	    fprintf(stderr, "%s\n", sendbuf);
 	    write(sockfd, sendbuf, BUFFER_SIZE);
 	    pthread_mutex_lock(&lock);
-	    while (valid) pthread_cond_wait(&cond, &lock);
+	    //while (valid) pthread_cond_wait(&cond, &lock);
 	    fbputs("ME: ", fb_place, 0);
 	    fbputs( sendbuf, fb_place, 4);
 	    fb_place++;
 	    if(fb_place >= 19) fb_place = 8;
-	    pthread_cond_signal(&cond);
+	    //pthread_cond_signal(&cond);
 	    pthread_mutex_unlock(&lock);
 	    memset(sendbuf, ' ', sizeof(sendbuf));
 	    sendbuf[BUFFER_SIZE - 1] = 0;//'\n';
@@ -255,12 +257,12 @@ void *network_thread_f(void *ignored)
     recvBuf[n] = '\0';
     printf("%s", recvBuf);
     pthread_mutex_lock(&lock);
-    while (valid) pthread_cond_wait(&cond, &lock)
+    //while (valid) pthread_cond_wait(&cond, &lock)
     fbputs(recvBuf, fb_place, 0);
     //if (strlen(recvBuf) > 64) place++;
     fb_place++;
     if (fb_place >= 20) fb_place = 8;
-    pthread_cond_signal(&cond);
+    //pthread_cond_signal(&cond);
     pthread_mutex_unlock(&lock);
     memset(recvBuf, ' ', sizeof(recvBuf));
     recvBuf[BUFFER_SIZE - 1] = '\n';
