@@ -40,9 +40,10 @@ pthread_t network_thread;
 void *network_thread_f(void *);
 int convert_key(uint8_t mod, uint8_t key);
 int fb_place, flag;
+pthread_mutex_t lock;
+pthread_cond_t cond;
 
 void clear(int r, int rs, int c, int cs) {
-  //fprintf(stderr, "clear called!!\n");
   for (int col = cs; col < c; col++) {
     for (int row = rs; row < r; row++) {
       fbputchar(' ', row, col);
@@ -63,7 +64,6 @@ int checkcurr(int row, int col) {
 
 int main()
 {
-  //delete cur_row
   int err, col, cur_row, cur_col, buff_col;
   
   struct sockaddr_in serv_addr;
@@ -76,7 +76,7 @@ int main()
     fprintf(stderr, "Error: Could not open framebuffer: %d\n", err);
     exit(1);
   }
-
+  
   //clear screen
   clear(24,0,64,0);
   
@@ -119,6 +119,14 @@ int main()
     exit(1);
   }
 
+  //mutex intiation 
+  /*if (pthread_mutex_init(&lock, NULL) != 0) {
+    fprintf(stderr, "Could not initiate mutex");
+    exit(1);
+    }*/
+  pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+  pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+
   /* Start the network thread */
   pthread_create(&network_thread, NULL, network_thread_f, NULL);
 
@@ -153,40 +161,37 @@ int main()
 	    } else cur_col++;
 	    buff_col++;
 	    buf_end++;
-	  //if (packet.keycode[0] != 0x00) cur_col++;
 	} else {
 	  if (key == 8) { //backspace
 	    if(state != 1) {
-	      //fbputchar(hold, cur_row, cur_col);
 	      memcpy(sendbuf + buff_col - 1, sendbuf + buff_col, (buf_end - buff_col) + 1);
 	      if(state == 3) {
 		cur_col = 63;
 		cur_row = 21;
 		} else cur_col--;
-	      //if (buff_col == buf_end) buf_end--;
 	      buff_col--;
 	      buf_end--;
-	      //sendbuf[buff_col] = ' ';
-	      //fbputs(sendbuf, cur_row, 0);
 	    }
 	  }
 	  else if (key == 1) { // enter
 	    sendbuf[buf_end] = 0;
 	    fprintf(stderr, "%s\n", sendbuf);
 	    write(sockfd, sendbuf, BUFFER_SIZE);
+	    pthread_mutex_lock(&lock);
+	    while (valid) pthread_cond_wait(&cond, &lock);
 	    fbputs("ME: ", fb_place, 0);
 	    fbputs( sendbuf, fb_place, 4);
 	    fb_place++;
 	    if(fb_place >= 19) fb_place = 8;
+	    pthread_cond_signal(&cond);
+	    pthread_mutex_unlock(&lock);
 	    memset(sendbuf, ' ', sizeof(sendbuf));
 	    sendbuf[BUFFER_SIZE - 1] = 0;//'\n';
 	    fbputs(sendbuf, fb_place, 0);
 	    memset(sendbuf, 0, sizeof(sendbuf));
-	    //clear(23,21,64,0);
 	    cur_col = 0;
 	    buff_col = 0;
 	    cur_row = 21;
-	    //sendbuf[0] = 0;
 	    buf_end = 0;
 	  }
 	  else if (key == 2) { //left arrow
@@ -213,10 +218,8 @@ int main()
       }
       clear(23,21,64,0);
       if (strlen(sendbuf) >= 64) {
-	//memcpy(half2, sendbuf + 64, 64);
 	strncpy(half2, sendbuf + 64, 64);
 	fbputs(half2, 22, 0);
-	//memcpy(half1, sendbuf, 64);
 	strncpy(half1, sendbuf, 64);
 	half1[64] = 0;
 	fbputs(half1, 21, 0);
@@ -251,10 +254,14 @@ void *network_thread_f(void *ignored)
   while ( (n = read(sockfd, &recvBuf, BUFFER_SIZE - 1)) > 0 ) {
     recvBuf[n] = '\0';
     printf("%s", recvBuf);
+    pthread_mutex_lock(&lock);
+    while (valid) pthread_cond_wait(&cond, &lock)
     fbputs(recvBuf, fb_place, 0);
     //if (strlen(recvBuf) > 64) place++;
     fb_place++;
     if (fb_place >= 20) fb_place = 8;
+    pthread_cond_signal(&cond);
+    pthread_mutex_unlock(&lock);
     memset(recvBuf, ' ', sizeof(recvBuf));
     recvBuf[BUFFER_SIZE - 1] = '\n';
     fbputs(recvBuf, fb_place, 0);
@@ -264,17 +271,14 @@ void *network_thread_f(void *ignored)
 }
 
 int convert_key(uint8_t mod, uint8_t key) {
-  //int out;
   int ikey = (int) key;
   int imod = (int) mod;
   if (ikey >= 4 && ikey <= 29) { // letters
-    //ikey = ikey + 93;
-    //fprintf(stderr, "ikey is %d\n", ikey);
-    if ((imod == 2 || imod == 32) && flag != 2) {
+    if ((imod == 2 || imod == 32) && flag != 2) { // capital
       ikey = ikey + 61;
       flag = 1;
     }
-    else if(flag == 0) {
+    else if(flag == 0) { // lower case
       ikey = ikey + 93;
       flag = 2;
     }
@@ -295,8 +299,8 @@ int convert_key(uint8_t mod, uint8_t key) {
       else if (ikey == 39) ikey = 41; // )
     }
     else {
-      if(ikey != 39) ikey = ikey + 19;
-      else ikey = 48;
+      if(ikey != 39) ikey = ikey + 19; // 1 - 9
+      else ikey = 48; // 0
     }
   }
   else if (key == 42) ikey = 8; //backspace
