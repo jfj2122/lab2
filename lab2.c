@@ -270,7 +270,7 @@ int convert_key(uint8_t mod, uint8_t key) {
   if (ikey >= 4 && ikey <= 29) { // letters
     //ikey = ikey + 93;
     //fprintf(stderr, "ikey is %d\n", ikey);
-    if (imod == 2 || imod == 32 && flag != 2) {
+    if ((imod == 2 || imod == 32) && flag != 2) {
       ikey = ikey + 61;
       flag = 1;
     }
@@ -280,19 +280,19 @@ int convert_key(uint8_t mod, uint8_t key) {
     }
     else ikey = 0;
   }
-  else if (ikey == 0 && imod == 0 && (flag == 1 || flag == 2) flag = 0; //reset flag
+  else if (ikey == 0 && imod == 0 && (flag == 1 || flag == 2)) flag = 0; //reset flag
   else if (ikey >= 30 && ikey <= 39) { //numbers
     if (imod == 2 || imod == 32 ) {
       if (ikey == 30) ikey = 33; // !
-      if (ikey == 31) ikey = 64; // @
-      if (ikey == 32) ikey = 35; // #
-      if (ikey == 33) ikey = 36; // $
-      if (ikey == 34) ikey = 37; // %
-      if (ikey == 35) ikey = 94; // ^
-      if (ikey == 36) ikey = 38; // &
-      if (ikey == 37) ikey = 42; // *
-      if (ikey == 38) ikey = 40; // (
-      if (ikey == 39) ikey = 41; // )
+      else if (ikey == 31) ikey = 64; // @
+      else if (ikey == 32) ikey = 35; // #
+      else if (ikey == 33) ikey = 36; // $
+      else if (ikey == 34) ikey = 37; // %
+      else if (ikey == 35) ikey = 94; // ^
+      else if (ikey == 36) ikey = 38; // &
+      else if (ikey == 37) ikey = 42; // *
+      else if (ikey == 38) ikey = 40; // (
+      else if (ikey == 39) ikey = 41; // )
     }
     else {
       if(ikey != 39) ikey = ikey + 19;
