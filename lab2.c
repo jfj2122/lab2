@@ -136,6 +136,7 @@ int main()
   memset(sendbuf, 0, BUFFER_SIZE);
   char half1[BUFFER_SIZE/2 + 1];
   char half2[BUFFER_SIZE/2];
+  char last4[4];
   buf_end = 0;
   flag = 0;
   for (;;) {
@@ -178,11 +179,17 @@ int main()
 	    if (strlen(sendbuf) >= 64) {
 	      strncpy(half2, sendbuf + 64, 64);
 	      fbputs(half2, fb_place + 1, 0);
-	      strncpy(half1, sendbuf, 64);
-	      half1[64] = 0;
-	      fbputs(half1, fb_place, 0);
+	      strncpy(half1, sendbuf, 60);
+	      half1[60] = 0;
+	      fbputs(half1, fb_place, 4);
 	      fb_place++;
-	    } else fbputs(sendbuf, place, 0);
+	      if (strlen(sendbuf) >= 124) {
+		strncpy(last4, sendbuf + 124, 4);
+		half2[64] = 0;
+		fb_place++;
+		fbputs(last4, fb_place, 0);
+	      }
+	    } else fbputs(sendbuf, fb_place, 0);
 	    fb_place++;
 	    if(fb_place >= 19) fb_place = 8;
 	    pthread_mutex_unlock(&lock);
