@@ -174,7 +174,15 @@ int main()
 	    write(sockfd, sendbuf, BUFFER_SIZE);
 	    pthread_mutex_lock(&lock);
 	    fbputs("ME: ", fb_place, 0);
-	    fbputs( sendbuf, fb_place, 4);
+	    //fbputs( sendbuf, fb_place, 4);
+	    if (strlen(sendbuf) >= 64) {
+	      strncpy(half2, sendbuf + 64, 64);
+	      fbputs(half2, fb_place + 1, 0);
+	      strncpy(half1, sendbuf, 64);
+	      half1[64] = 0;
+	      fbputs(half1, fb_place, 0);
+	      fb_place++;
+	    } else fbputs(sendbuf, place, 0);
 	    fb_place++;
 	    if(fb_place >= 19) fb_place = 8;
 	    pthread_mutex_unlock(&lock);
