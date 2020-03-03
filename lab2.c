@@ -280,7 +280,7 @@ int convert_key(uint8_t mod, uint8_t key, uint8_t key2) {
       flag = 1;
     }
     else if(flag == 0 || flag == 4) { // lower case
-      if (flage == 0) ikey = ikey + 93;
+      if (flag == 0) ikey = ikey + 93;
       else ikey = ikey2 + 93;
       flag = 2;
     }
