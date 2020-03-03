@@ -189,7 +189,7 @@ int main()
 		fb_place++;
 		fbputs(last4, fb_place, 0);
 	      }
-	    } else fbputs(sendbuf, fb_place, 0);
+	    } else fbputs(sendbuf, fb_place, 4);
 	    fb_place++;
 	    if(fb_place >= 19) fb_place = 8;
 	    pthread_mutex_unlock(&lock);
@@ -280,7 +280,8 @@ int convert_key(uint8_t mod, uint8_t key, uint8_t key2) {
       flag = 1;
     }
     else if(flag == 0 || flag == 4) { // lower case
-      ikey = ikey + 93;
+      if (flage == 0) ikey = ikey + 93;
+      else ikey = ikey2 + 93;
       flag = 2;
     }
     else ikey = 0;
